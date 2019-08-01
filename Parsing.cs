@@ -2,9 +2,8 @@ using System;
 using System.Net;
 using System.Text;
 using HtmlAgilityPack;
-using System.Text.RegularExpressions;
 
-namespace Scraping
+namespace Gundem_TelegramBot
 {
     public class Parsing
     {
@@ -20,29 +19,11 @@ namespace Scraping
             return document;
         }
 
-        public string tagData(HtmlAgilityPack.HtmlDocument document, string xpath) // var tipini dinamik olarak dönderiyorum
+        public dynamic tagData(HtmlAgilityPack.HtmlDocument document, string xpath) // var tipini dinamik olarak dönderiyorum
         {
             var selectedHtml = xpath;
-            StringBuilder sbuilder = new StringBuilder();
-
             var selectedH_list = document.DocumentNode.SelectNodes(selectedHtml);
-
-            foreach (var item in selectedH_list)
-            {
-                foreach (var Inneritem in item.SelectNodes("li"))
-                {
-                    /* ekşi'de reklam hizmetinden dolayı böyle bir satır düşüyor olabilir. onu devredışı 
-                    bırakmak için o satırı stringimin içerisine eklemiyorum.*/
-                    if (!Inneritem.InnerText.ToString().Contains("NativeAdPub.push"))
-                    {
-                        sbuilder.AppendLine(Inneritem.InnerText);
-                    }
-                }
-            }
-
-            // gelen veride boş satırlar olabiliyor bu yüzden onları işin içinden temizliyoruz
-            string returnedData = sbuilder.ToString();
-            return Regex.Replace(returnedData, @"^\s+$[\r]*", string.Empty, RegexOptions.Multiline);
+            return selectedH_list;
         }
     }
 }
