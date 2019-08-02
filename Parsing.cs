@@ -2,6 +2,8 @@ using System;
 using System.Net;
 using System.Text;
 using HtmlAgilityPack;
+using Telegram.Bot;
+
 
 namespace Gundem_TelegramBot
 {

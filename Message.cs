@@ -17,7 +17,7 @@ namespace Gundem_TelegramBot
                 if (e.Message.Text == "/help")
                     await Program.botClient.SendTextMessageAsync( // mesajı göndermeyi bekliyoruz.
                     chatId: e.Message.Chat, // her mesaj atan kişiyle oluşan bir unique Id var 
-                    text: "Merhaba, bu bot belirli platformlardaki gündemi, olayları ve trend başlıkları gösterir.\nKullanabileceğiniz komutlar :\n/reddit\n/ekşi"
+                    text: "Merhaba, Ekşi sözlük gündem başlıklarını, gündem başlıklarının linklerini, bana verilen entry numarasından entry içeriğini sana gösterebilirim.\nKullanabileceğin komutlar işte burada\n/eksigundem\n/eksigundemlink\n/eksientry\n\nGeliştiriciye destek olmak için;\nRipple XRP Adress =\nrDrwceWscNExnTmgxz51cRcrs24dhVEz3V\nXRP Tag = 0"
                     );
 
                 else if (e.Message.Text == "/eksigundem")
@@ -28,6 +28,8 @@ namespace Gundem_TelegramBot
                     var returnedS_hList = parsed.TagData(hookedDocument, xpath);
 
                     StringBuilder sbuilder = new StringBuilder();
+
+                    int sequence = 1;
 
                     foreach (var item in returnedS_hList)
                     {
@@ -46,7 +48,8 @@ namespace Gundem_TelegramBot
                                 bunu önlemek için bir anahtar kodu eklemem gerekiyor.*/
                                 if (Inner_li.InnerText.LastIndexOf(' ') != -1)
                                 {
-                                    sbuilder.AppendLine(Inner_li.InnerText);
+                                    sbuilder.AppendLine(sequence + "- " + Inner_li.InnerText);
+                                    sequence++;
                                 }
                             }
                         }
@@ -56,7 +59,7 @@ namespace Gundem_TelegramBot
 
                     await Program.botClient.SendTextMessageAsync( // mesajı göndermeyi bekliyoruz.
                     chatId: e.Message.Chat, // her mesaj atan kişiyle oluşan bir unique Id var
-                    text: Regex.Replace(Data, @"^\s+$[\r\n]*", string.Empty, RegexOptions.Multiline) + "\nLinkleri görmek için tıklayınız:\n/eksigundemlink"
+                    text: Regex.Replace(Data, @"^\s+$[\r\n]*", string.Empty, RegexOptions.Multiline) + "\nBu başlıkların linklerini sana gösterebilirim /eksigundemlink"
                     );
                 }
 
@@ -89,6 +92,47 @@ namespace Gundem_TelegramBot
                     await Program.botClient.SendTextMessageAsync(
                     chatId: e.Message.Chat,
                     text: Regex.Replace(Data, @"^\s+$[\r]*", string.Empty, RegexOptions.Multiline)
+                    );
+                }
+                else if (e.Message.Text.Contains("/eksientry"))
+                {
+                    string entryId = e.Message.Text.Substring(10);
+                    Parsing parsed = new Parsing();
+                    try
+                    {
+                        HtmlDocument hookedDocument = parsed.HookSite("https://eksisozluk.com/entry/" + entryId.Trim());
+                        string xpath = @"//*[@id='entry-item-list']/li";
+                        var returnedS_hList = parsed.TagData(hookedDocument, xpath);
+                        StringBuilder sbuilder = new StringBuilder();
+                        foreach (var item in returnedS_hList)
+                        {
+                            foreach (var Inner_div in item.SelectNodes("div"))
+                            {
+                                if (!string.IsNullOrEmpty(Inner_div.ToString()))
+                                {
+                                    sbuilder.AppendLine(Inner_div.InnerText);
+                                }
+                            }
+                        }
+                        string Data = sbuilder.ToString();
+                        await Program.botClient.SendTextMessageAsync(
+                        chatId: e.Message.Chat,
+                        text: Regex.Replace(Data, @"^\s+$[\r]*", string.Empty, RegexOptions.Multiline)
+                        );
+                    }
+                    catch
+                    {
+                        await Program.botClient.SendTextMessageAsync(
+                        chatId: e.Message.Chat,
+                        text: "Üzgünüm, geçerli bir entry numarası girmedin!\nEntry numarasını kontrol edip tekrar denersen sana yardımcı olmaya çalışacağım.\nUnutma entry numaraları sadece rakamlardan oluşur, harf ve karakter içermez."
+                        );
+                    }
+                }
+                else
+                {
+                    await Program.botClient.SendTextMessageAsync(
+                    chatId: e.Message.Chat,
+                    text: "Üzgünüm, geçerli bir komut girmedin!\nGeçerli komutların listesini sana gösterebilirim /help"
                     );
                 }
             }
