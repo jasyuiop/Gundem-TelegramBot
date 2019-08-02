@@ -1,6 +1,4 @@
 using System;
-using System.Threading;
-using Telegram.Bot;
 using Telegram.Bot.Args;
 using HtmlAgilityPack;
 using System.Text.RegularExpressions;
@@ -17,29 +15,32 @@ namespace Gundem_TelegramBot
                 Console.WriteLine($"Alınan Mesajın ChatId'si = {e.Message.Chat.Id}.");
 
                 if (e.Message.Text == "/help")
-                    await Gundem_TelegramBot.Program.botClient.SendTextMessageAsync( // mesajı göndermeyi bekliyoruz.
+                    await Program.botClient.SendTextMessageAsync( // mesajı göndermeyi bekliyoruz.
                     chatId: e.Message.Chat, // her mesaj atan kişiyle oluşan bir unique Id var 
                     text: "Merhaba, bu bot belirli platformlardaki gündemi, olayları ve trend başlıkları gösterir.\nKullanabileceğiniz komutlar :\n/reddit\n/ekşi"
                     );
 
-                else if (e.Message.Text == "/eksi")
+                else if (e.Message.Text == "/eksigundem")
                 {
                     Parsing parsed = new Parsing();
-                    HtmlAgilityPack.HtmlDocument hookedDocument = parsed.hookSite("https://eksisozluk.com");
+                    HtmlDocument hookedDocument = parsed.HookSite("https://eksisozluk.com");
                     string xpath = @"//*[@id='partial-index']/ul";
-                    var returnedS_hList = parsed.tagData(hookedDocument, xpath);
+                    var returnedS_hList = parsed.TagData(hookedDocument, xpath);
 
                     StringBuilder sbuilder = new StringBuilder();
 
                     foreach (var item in returnedS_hList)
                     {
-                        foreach (var Inneritem in item.SelectNodes("li"))
+                        foreach (var Inner_li in item.SelectNodes("li//a//text()"))
                         {
+
                             /* ekşi'de reklam hizmetinden dolayı böyle bir satır düşüyor olabilir. onu devredışı 
                             bırakmak için o satırı stringimin içerisine eklemiyorum.*/
-                            if (!Inneritem.InnerText.ToString().Contains("NativeAdPub.push"))
+                            // if (!Inner_li.InnerText.ToString().Contains("NativeAdPub.push"))
+                            if (!string.IsNullOrEmpty(Inner_li.ToString()))
                             {
-                                sbuilder.AppendLine(Inneritem.InnerText);
+
+                                sbuilder.AppendLine(Inner_li.InnerText);
                             }
                         }
                     }
@@ -48,9 +49,34 @@ namespace Gundem_TelegramBot
 
                     await Program.botClient.SendTextMessageAsync( // mesajı göndermeyi bekliyoruz.
                     chatId: e.Message.Chat, // her mesaj atan kişiyle oluşan bir unique Id var
+                    text: Regex.Replace(Data, @"^\s+$[\r\n]*", string.Empty, RegexOptions.Multiline) + "Linkleri görmek için tıklayınız:\n/eksigundemlink"
+                    );
+                }
+
+                else if (e.Message.Text == "/eksigundemlink")
+                {
+                    Parsing parsed = new Parsing();
+                    HtmlDocument hookedDocument = parsed.HookSite("https://eksisozluk.com");
+                    string xpath = @"//*[@id='partial-index']/ul";
+                    var returnedS_hList = parsed.TagData(hookedDocument, xpath);
+
+                    StringBuilder sbuilder = new StringBuilder();
+                    int sequence = 1;
+                    foreach (var item in returnedS_hList)
+                    {
+                        foreach (var Inner_a in item.SelectNodes("li//a"))
+                        {
+                            HtmlAttribute href_att = Inner_a.Attributes["href"];
+                            sbuilder.AppendLine(sequence + "-" + "https://eksisozluk.com" + href_att.Value);
+                            sequence++;
+                        }
+                    }
+                    string Data = sbuilder.ToString();
+
+                    await Program.botClient.SendTextMessageAsync(
+                    chatId: e.Message.Chat,
                     text: Regex.Replace(Data, @"^\s+$[\r]*", string.Empty, RegexOptions.Multiline)
                     );
-
                 }
             }
         }
