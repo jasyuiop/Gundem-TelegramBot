@@ -10,7 +10,7 @@ namespace Gundem_TelegramBot
 
         static void Main()
         {
-            botClient = new TelegramBotClient("917945088:AAHfDNJA5ldmTHTvctIXWKzPfW5WiSSmxYM");
+            botClient = new TelegramBotClient("910279751:AAHX6yptqAAmK5FquaBTUgZYWToRLKfNGj4");
 
             var me = botClient.GetMeAsync().Result;
             Console.WriteLine(

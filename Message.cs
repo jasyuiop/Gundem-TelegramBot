@@ -14,7 +14,14 @@ namespace Gundem_TelegramBot
             {
                 Console.WriteLine($"Alınan Mesajın ChatId'si = {e.Message.Chat.Id}.");
 
-                if (e.Message.Text == "/help")
+                if (e.Message.Text == "/start")
+                    await Program.botClient.SendTextMessageAsync( // mesajı göndermeyi bekliyoruz.
+                    chatId: e.Message.Chat, // her mesaj atan kişiyle oluşan bir unique Id var 
+                    text: "Merhaba, Ekşi sözlük gündem başlıklarını, gündem başlıklarının linklerini, bana verilen entry numarasından entry içeriğini sana gösterebilirim.\nKullanabileceğin komutlar işte burada\n/help\n/eksigundem\n/eksigundemlink\n/eksientry\n\nGeliştiriciye destek olmak için;\nRipple XRP Adress =\nrDrwceWscNExnTmgxz51cRcrs24dhVEz3V\nXRP Tag = 0"
+                    );
+
+
+                else if (e.Message.Text == "/help")
                     await Program.botClient.SendTextMessageAsync( // mesajı göndermeyi bekliyoruz.
                     chatId: e.Message.Chat, // her mesaj atan kişiyle oluşan bir unique Id var 
                     text: "Merhaba, Ekşi sözlük gündem başlıklarını, gündem başlıklarının linklerini, bana verilen entry numarasından entry içeriğini sana gösterebilirim.\nKullanabileceğin komutlar işte burada\n/eksigundem\n/eksigundemlink\n/eksientry\n\nGeliştiriciye destek olmak için;\nRipple XRP Adress =\nrDrwceWscNExnTmgxz51cRcrs24dhVEz3V\nXRP Tag = 0"
