@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Threading;
 using Telegram.Bot;
-using Telegram.Bot.Args;
-using HtmlAgilityPack;
 
 namespace Gundem_TelegramBot
 {
