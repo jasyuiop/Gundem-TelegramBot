@@ -33,14 +33,21 @@ namespace Gundem_TelegramBot
                     {
                         foreach (var Inner_li in item.SelectNodes("li//a//text()"))
                         {
-
                             /* ekşi'de reklam hizmetinden dolayı böyle bir satır düşüyor olabilir. onu devredışı 
                             bırakmak için o satırı stringimin içerisine eklemiyorum.*/
                             // if (!Inner_li.InnerText.ToString().Contains("NativeAdPub.push"))
+
+                            // IsNullOrEmpty ile'de o reklam hizmetinden düşen satırı engelleyebiliyoruz
+                            // ve böylesi daha sağlıklı.
                             if (!string.IsNullOrEmpty(Inner_li.ToString()))
                             {
-
-                                sbuilder.AppendLine(Inner_li.InnerText);
+                                /* text() node'unu çektiğim zaman small tag'ındaki veriler ile birlikte geliyor.
+                                small tag'ından gelen verilerın last indexleri -1 olarak düşüyor.
+                                bunu önlemek için bir anahtar kodu eklemem gerekiyor.*/
+                                if (Inner_li.InnerText.LastIndexOf(' ') != -1)
+                                {
+                                    sbuilder.AppendLine(Inner_li.InnerText);
+                                }
                             }
                         }
                     }
@@ -49,7 +56,7 @@ namespace Gundem_TelegramBot
 
                     await Program.botClient.SendTextMessageAsync( // mesajı göndermeyi bekliyoruz.
                     chatId: e.Message.Chat, // her mesaj atan kişiyle oluşan bir unique Id var
-                    text: Regex.Replace(Data, @"^\s+$[\r\n]*", string.Empty, RegexOptions.Multiline) + "Linkleri görmek için tıklayınız:\n/eksigundemlink"
+                    text: Regex.Replace(Data, @"^\s+$[\r\n]*", string.Empty, RegexOptions.Multiline) + "\nLinkleri görmek için tıklayınız:\n/eksigundemlink"
                     );
                 }
 
@@ -66,9 +73,15 @@ namespace Gundem_TelegramBot
                     {
                         foreach (var Inner_a in item.SelectNodes("li//a"))
                         {
-                            HtmlAttribute href_att = Inner_a.Attributes["href"];
-                            sbuilder.AppendLine(sequence + "-" + "https://eksisozluk.com" + href_att.Value);
-                            sequence++;
+                            // Burada IsNullOrEmpty gereksiz gibi görünebilir fakat 
+                            // her ihtimale karşı verilerin düzgün bir şekilde aktarılması için
+                            // bu kod çok önemli!
+                            if (!string.IsNullOrEmpty(Inner_a.ToString()))
+                            {
+                                HtmlAttribute href_att = Inner_a.Attributes["href"];
+                                sbuilder.AppendLine(sequence + "-" + "https://eksisozluk.com" + href_att.Value);
+                                sequence++;
+                            }
                         }
                     }
                     string Data = sbuilder.ToString();
