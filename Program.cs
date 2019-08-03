@@ -10,7 +10,7 @@ namespace Gundem_TelegramBot
 
         static void Main()
         {
-            botClient = new TelegramBotClient("***REMOVED***");
+            botClient = new TelegramBotClient(""); // Buraya HTTP API'e erişim için, token yazılıyor
 
             var me = botClient.GetMeAsync().Result;
             Console.WriteLine(
