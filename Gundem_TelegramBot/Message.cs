@@ -17,14 +17,16 @@ namespace Gundem_TelegramBot
                 if (e.Message.Text == "/start")
                     await Program.botClient.SendTextMessageAsync( // mesajı göndermeyi bekliyoruz.
                     chatId: e.Message.Chat, // her mesaj atan kişiyle oluşan bir unique Id var 
-                    text: "Merhaba, Ekşi sözlük gündemini, bana verilen entry numarasından entry'i sana gösterebilirim\nKullanabileceğin komutlar işte burada\n/yardim\n/gundem\n/entry\n\nGeliştiriciye destek olmak için;\nRipple XRP Adress =\nrDrwceWscNExnTmgxz51cRcrs24dhVEz3V\nXRP Tag = 0"
+                    text: "Merhaba, Ekşi sözlük gündemini, bana verilen entry numarasından entry'i sana gösterebilirim\nKullanabileceğin komutlar işte burada\n/yardim\n/gundem\n/entry\n\n[Ben artık açık kaynak bir projeyim, tıkla ve github üzerinde bana gözat.](https://github.com/jasyuiop/Gundem-TelegramBot)\n\nGeliştiriciye destek olmak için;\nRipple XRP Adress =\nrDrwceWscNExnTmgxz51cRcrs24dhVEz3V\nXRP Tag = 0",
+                    parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown
                     );
 
 
                 else if (e.Message.Text == "/yardim")
                     await Program.botClient.SendTextMessageAsync( // mesajı göndermeyi bekliyoruz.
                     chatId: e.Message.Chat, // her mesaj atan kişiyle oluşan bir unique Id var 
-                    text: "Merhaba, Ekşi sözlük gündemini, bana verilen entry numarasından entry'i sana gösterebilirim\nKullanabileceğin komutlar işte burada\n/gundem\n/entry\n\nGeliştiriciye destek olmak için;\nRipple XRP Adress =\nrDrwceWscNExnTmgxz51cRcrs24dhVEz3V\nXRP Tag = 0"
+                    text: "Merhaba, Ekşi sözlük gündemini, bana verilen entry numarasından entry'i sana gösterebilirim\nKullanabileceğin komutlar işte burada\n/gundem\n/entry\n\n[Ben artık açık kaynak bir projeyim, tıkla ve github üzerinde bana gözat.](https://github.com/jasyuiop/Gundem-TelegramBot)\n\nGeliştiriciye destek olmak için;\nRipple XRP Adress =\nrDrwceWscNExnTmgxz51cRcrs24dhVEz3V\nXRP Tag = 0",
+                    parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown
                     );
 
                 else if (e.Message.Text == "/gundem")
