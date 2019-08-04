@@ -18,7 +18,7 @@ namespace Gundem_TelegramBot
                 if (e.Message.Text == "/start")
                     await Program.botClient.SendTextMessageAsync(
                     chatId: e.Message.Chat,
-                    text: "Merhaba, Ekşi sözlük gündemini, bana verilen entry numarasından entry'i sana gösterebilirim\nKullanabileceğin komutlar işte burada\n/yardim\n/gundem\n/entry\n/debe\n\n[Ben artık açık kaynak bir projeyim, tıkla ve github üzerinde bana gözat.](https://github.com/jasyuiop/Gundem-TelegramBot)\n\nGeliştiriciye destek olmak için;\nRipple XRP Adress =\nrDrwceWscNExnTmgxz51cRcrs24dhVEz3V\nXRP Tag = 0",
+                    text: "Merhaba, Ekşi sözlük gündemini, dünün en beğenilen entry'lerini, bana verilen entry numarasından entry'i sana gösterebilirim\nKullanabileceğin komutlar işte burada\n/yardim\n/gundem\n/entry\n/debe\n\n[Ben artık açık kaynak bir projeyim, tıkla ve github üzerinde bana gözat.](https://github.com/jasyuiop/Gundem-TelegramBot)\n\nGeliştiriciye destek olmak için;\nRipple XRP Adress =\nrDrwceWscNExnTmgxz51cRcrs24dhVEz3V\nXRP Tag = 0",
                     parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown
                     );
 
@@ -26,7 +26,7 @@ namespace Gundem_TelegramBot
                 else if (e.Message.Text == "/yardim")
                     await Program.botClient.SendTextMessageAsync(
                     chatId: e.Message.Chat,
-                    text: "Merhaba, Ekşi sözlük gündemini, bana verilen entry numarasından entry'i sana gösterebilirim\nKullanabileceğin komutlar işte burada\n/gundem\n/entry\n/debe\n\n[Ben artık açık kaynak bir projeyim, tıkla ve github üzerinde bana gözat.](https://github.com/jasyuiop/Gundem-TelegramBot)\n\nGeliştiriciye destek olmak için;\nRipple XRP Adress =\nrDrwceWscNExnTmgxz51cRcrs24dhVEz3V\nXRP Tag = 0",
+                    text: "Merhaba, Ekşi sözlük gündemini, dünün en beğenilen entry'lerini, bana verilen entry numarasından entry'i sana gösterebilirim\nKullanabileceğin komutlar işte burada\n/gundem\n/entry\n/debe\n\n[Ben artık açık kaynak bir projeyim, tıkla ve github üzerinde bana gözat.](https://github.com/jasyuiop/Gundem-TelegramBot)\n\nGeliştiriciye destek olmak için;\nRipple XRP Adress =\nrDrwceWscNExnTmgxz51cRcrs24dhVEz3V\nXRP Tag = 0",
                     parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown
                     );
 
@@ -190,7 +190,7 @@ namespace Gundem_TelegramBot
                 {
                     await Program.botClient.SendTextMessageAsync(
                     chatId: e.Message.Chat,
-                    text: "Entry'leri görmek için /entry komutunu kullanmanı tavsiye ediyorum, artık başlık ismini ve başlık ismine gömülü entry link'ini de gösterebiliyorum, geliştiricim artık böylesini uygun görüyor."
+                    text: "Entry'leri görmek için /entry komutunu kullanmanı tavsiye ediyorum, artık başlık ismini ve başlık ismine gömülü entry link'ini de gösterebiliyorum."
                     );
                 }
 
