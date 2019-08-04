@@ -3,6 +3,7 @@ using Telegram.Bot.Args;
 using HtmlAgilityPack;
 using System.Text.RegularExpressions;
 using System.Text;
+using System.Collections.Generic;
 
 namespace Gundem_TelegramBot
 {
@@ -17,7 +18,7 @@ namespace Gundem_TelegramBot
                 if (e.Message.Text == "/start")
                     await Program.botClient.SendTextMessageAsync( // mesajı göndermeyi bekliyoruz.
                     chatId: e.Message.Chat, // her mesaj atan kişiyle oluşan bir unique Id var 
-                    text: "Merhaba, Ekşi sözlük gündemini, bana verilen entry numarasından entry'i sana gösterebilirim\nKullanabileceğin komutlar işte burada\n/yardim\n/gundem\n/entry\n\n[Ben artık açık kaynak bir projeyim, tıkla ve github üzerinde bana gözat.](https://github.com/jasyuiop/Gundem-TelegramBot)\n\nGeliştiriciye destek olmak için;\nRipple XRP Adress =\nrDrwceWscNExnTmgxz51cRcrs24dhVEz3V\nXRP Tag = 0",
+                    text: "Merhaba, Ekşi sözlük gündemini, bana verilen entry numarasından entry'i sana gösterebilirim\nKullanabileceğin komutlar işte burada\n/yardim\n/gundem\n/entry\n/debe\n\n[Ben artık açık kaynak bir projeyim, tıkla ve github üzerinde bana gözat.](https://github.com/jasyuiop/Gundem-TelegramBot)\n\nGeliştiriciye destek olmak için;\nRipple XRP Adress =\nrDrwceWscNExnTmgxz51cRcrs24dhVEz3V\nXRP Tag = 0",
                     parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown
                     );
 
@@ -25,7 +26,7 @@ namespace Gundem_TelegramBot
                 else if (e.Message.Text == "/yardim")
                     await Program.botClient.SendTextMessageAsync( // mesajı göndermeyi bekliyoruz.
                     chatId: e.Message.Chat, // her mesaj atan kişiyle oluşan bir unique Id var 
-                    text: "Merhaba, Ekşi sözlük gündemini, bana verilen entry numarasından entry'i sana gösterebilirim\nKullanabileceğin komutlar işte burada\n/gundem\n/entry\n\n[Ben artık açık kaynak bir projeyim, tıkla ve github üzerinde bana gözat.](https://github.com/jasyuiop/Gundem-TelegramBot)\n\nGeliştiriciye destek olmak için;\nRipple XRP Adress =\nrDrwceWscNExnTmgxz51cRcrs24dhVEz3V\nXRP Tag = 0",
+                    text: "Merhaba, Ekşi sözlük gündemini, bana verilen entry numarasından entry'i sana gösterebilirim\nKullanabileceğin komutlar işte burada\n/gundem\n/entry\n/debe\n\n[Ben artık açık kaynak bir projeyim, tıkla ve github üzerinde bana gözat.](https://github.com/jasyuiop/Gundem-TelegramBot)\n\nGeliştiriciye destek olmak için;\nRipple XRP Adress =\nrDrwceWscNExnTmgxz51cRcrs24dhVEz3V\nXRP Tag = 0",
                     parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown
                     );
 
@@ -52,28 +53,22 @@ namespace Gundem_TelegramBot
                             // ve böylesi daha sağlıklı.
                             if (!string.IsNullOrEmpty(Inner_li.ToString()))
                             {
-                                /* text() node'unu çektiğim zaman small tag'ındaki veriler ile birlikte geliyor.
-                                small tag'ından gelen verilerın last indexleri -1 olarak düşüyor.
-                                bunu önlemek için bir anahtar kodu eklemem gerekiyor.*/
-                                if (Inner_li.InnerText.LastIndexOf(' ') != -1)
-                                {
-                                    HtmlAttribute href_att = Inner_li.Attributes["href"];
-                                    HtmlAttribute text_att = Inner_li.Attributes["text()"];
-                                    sbuilder.AppendLine(sequence + "- " + "[" + Inner_li.InnerText + "]" + "(" + "https://eksisozluk.com" + href_att.Value + ")");
-                                    sequence++;
-                                }
+                                HtmlAttribute href_att = Inner_li.Attributes["href"];
+                                HtmlAttribute text_att = Inner_li.Attributes["text()"];
+                                sbuilder.AppendLine(sequence + ". " + "[" + Inner_li.InnerText + "]" + "(" + "https://eksisozluk.com" + href_att.Value + ")");
+                                sequence++;
                             }
                         }
                     }
                     // gelen veride boş satırlar olabiliyor bu yüzden onları işin içinden temizliyoruz
                     string Data = sbuilder.ToString();
-
                     await Program.botClient.SendTextMessageAsync( // mesajı göndermeyi bekliyoruz.
                     chatId: e.Message.Chat, // her mesaj atan kişiyle oluşan bir unique Id var
                     text: Regex.Replace(Data, @"^\s+$[\r\n]*", string.Empty, RegexOptions.Multiline),
                     parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown
                     );
                 }
+
                 else if (e.Message.Text.Contains("/entry"))
                 {
                     string entryId = e.Message.Text.Substring(6);
@@ -127,6 +122,46 @@ namespace Gundem_TelegramBot
                         text: "Üzgünüm, geçerli bir entry numarası girmedin!\nEntry numarasını kontrol edip tekrar denersen sana yardımcı olmaya çalışacağım.\nUnutma entry numaraları sadece rakamlardan oluşur, harf ve karakter içermez."
                         );
                     }
+                }
+
+                else if (e.Message.Text == "/debe")
+                {
+                    Parsing parsed = new Parsing();
+                    HtmlDocument hookedDocument = parsed.HookSite("https://sozlock.com/");
+                    string xpath = @"/html/body/main/div/div[2]/ul";
+                    var returnedS_hList = parsed.TagData(hookedDocument, xpath);
+
+                    StringBuilder sbuilder = new StringBuilder();
+
+                    foreach (var item in returnedS_hList)
+                    {
+                        foreach (var Inner_li in item.SelectNodes("li"))
+                        {
+                            Queue<string> links = new Queue<string>();
+                            foreach (var Inner_divA in Inner_li.SelectNodes("div[2]//a"))
+                            {
+                                HtmlAttribute href_att = Inner_divA.Attributes["href"];
+                                links.Enqueue(href_att.Value);
+                            }
+                            foreach (var Inner_h3 in Inner_li.SelectNodes("h3"))
+                            {
+                                if (!string.IsNullOrEmpty(Inner_h3.ToString()))
+                                {
+                                    /* h3'den gelen text'in içerisinde kesme işaretleri decode edilmemiş olarak dönüyor.
+                                    bu yüzden kesme işareti içeren cümlelerde kesme işareti değil de "&#39" yazısı görünüyor.
+                                    bunu önlemek için HtmlDecode kullanıyorum
+                                    */
+                                    sbuilder.AppendLine("[" + System.Web.HttpUtility.HtmlDecode(Inner_h3.InnerText) + "]" + "(" + links.Dequeue() + ")");
+                                }
+                            }
+                        }
+                    }
+                    string Data = sbuilder.ToString();
+                    await Program.botClient.SendTextMessageAsync(
+                    chatId: e.Message.Chat,
+                    text: Regex.Replace(Data, @"^\s+$[\r\s]*", string.Empty, RegexOptions.Multiline),
+                    parseMode: Telegram.Bot.Types.Enums.ParseMode.Markdown
+                    );
                 }
 
                 else if (e.Message.Text == "/eksigundemlink")
