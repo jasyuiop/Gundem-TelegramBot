@@ -21,7 +21,7 @@ namespace Gundem_TelegramBot
             return document;
         }
 
-        public dynamic TagData(HtmlDocument document, string xpath) // var tipini dinamik olarak dönderiyorum
+        public dynamic TagData(HtmlDocument document, string xpath)
         {
             var selectedHtml = xpath;
             var selectedH_list = document.DocumentNode.SelectNodes(selectedHtml);
