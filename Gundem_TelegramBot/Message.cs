@@ -163,6 +163,103 @@ namespace Gundem_TelegramBot
                     }
                 }
 
+                else if (e.Message.Text.Contains("/takip_baslik"))
+                {
+                    try
+                    {
+                        string chat_id = e.Message.Chat.Id.ToString();
+                        string follow_titleIncoming = e.Message.Text.Substring(13).Trim();
+
+                        /* kullanıcı mesajda linki boşluklu gönderebilir bunu kontrol edip temizlemem gerek*/
+                        string follow_title = follow_titleIncoming.Replace(" ", String.Empty);
+
+                        Parsing parsed = new Parsing();
+                        HtmlDocument hookedDocument = parsed.HookSite(follow_title);
+                        string xpath = @"//*[@id='title']";
+                        var returnedS_hList = parsed.TagData(hookedDocument, xpath);
+
+                        foreach (var item in returnedS_hList)
+                        {
+                            foreach (var Inner_a in item.SelectNodes("a"))
+                            {
+                                HtmlAttribute href_att = Inner_a.Attributes["href"];
+                                if (follow_title.Contains(href_att.Value))
+                                {
+                                    Database.Insertfollow_Title(chat_id, DateTime.Now, follow_title);
+                                    await Program.botClient.SendTextMessageAsync(
+                                    chatId: e.Message.Chat,
+                                    text: "baslik takibe eklendi."
+                                    );
+                                }
+                                else
+                                {
+                                    await Program.botClient.SendTextMessageAsync(
+                                    chatId: e.Message.Chat,
+                                    text: "başlık link'i doğru değil, kontrol için siteye gittim fakat 'böyle bir şey yok' dedi :)"
+                                    );
+                                }
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        await Program.botClient.SendTextMessageAsync(
+                        chatId: e.Message.Chat,
+                        text: "ekşi sözlükte herhangi bir başlığın linkini doğru verdiğine emin misin? eminsen birşeyler yanlış gidiyor demektir :)"
+                        );
+                    }
+                }
+
+                else if (e.Message.Text.Contains("/takip_biri"))
+                {
+                    
+                    try
+                    {
+                        string chat_id = e.Message.Chat.Id.ToString();
+                        string follow_userIncoming = e.Message.Text.Substring(11).Trim();
+
+                        /* kullanıcı mesajda linki boşluklu gönderebilir bunu kontrol edip temizlemem gerek*/
+                        string follow_user = follow_userIncoming.Replace(" ", String.Empty);
+
+                        Parsing parsed = new Parsing();
+                        HtmlDocument hookedDocument = parsed.HookSite(follow_user);
+                        string xpath = @"//*[@id='user-profile-title']";
+                        var returnedS_hList = parsed.TagData(hookedDocument, xpath);
+
+                        foreach (var item in returnedS_hList)
+                        {
+                            foreach (var Inner_a in item.SelectNodes("a"))
+                            {
+                                if (!string.IsNullOrEmpty(Inner_a.ToString()))
+                                {
+                                    if (follow_user.Contains(Inner_a.InnerText.Replace(' ', '-')))
+                                    {
+                                        Database.Insertfollow_User(chat_id, DateTime.Now, follow_user);
+                                        await Program.botClient.SendTextMessageAsync(
+                                        chatId: e.Message.Chat,
+                                        text: "kullanıcı artık takipte"
+                                        );
+                                    }
+                                    else
+                                    {
+                                        await Program.botClient.SendTextMessageAsync(
+                                        chatId: e.Message.Chat,
+                                        text: "kullanıcı link'i doğru değil, kontrol için siteye gittim fakat 'bulamadık o kullanıcıyı' dedi :)"
+                                        );
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        await Program.botClient.SendTextMessageAsync(
+                        chatId: e.Message.Chat,
+                        text: "ekşi sözlükte herhangi bir kullanıcının linkini doğru verdiğine emin misin? eminsen birşeyler yanlış gidiyor demektir :)"
+                        );
+                    }
+                }
+
                 else
                 {
                     await Program.botClient.SendTextMessageAsync(
