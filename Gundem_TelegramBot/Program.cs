@@ -27,7 +27,6 @@ namespace Gundem_TelegramBot
             IConfiguration config = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", true, true)
                 .Build();
-            var token = config["TelegramToken"];
             botClient = new TelegramBotClient(config["TelegramToken"]);
             var me = botClient.GetMeAsync().Result;
             Console.WriteLine($"Id = {me.Id} | Name = {me.FirstName}.");
