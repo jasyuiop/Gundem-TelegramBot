@@ -1,45 +1,25 @@
-﻿using Microsoft.Extensions.Configuration;
-using System;
+﻿using System;
 using System.Threading;
 using Telegram.Bot;
 
 namespace Gundem_TelegramBot
 {
-    internal class Program
+    class Program
     {
         public static ITelegramBotClient botClient;
-        private static AutoResetEvent autoResetEvent;
 
-        private static void WaitForCancel()
+        static void Main()
         {
-            autoResetEvent = new AutoResetEvent(false);
-            Console.WriteLine("Cikmak icin CTRL+Cye basin...");
-            Console.CancelKeyPress += (sender, e) =>
-            {
-                e.Cancel = true;
-                autoResetEvent.Set();
-            };
-            autoResetEvent.WaitOne();
-        }
+            botClient = new TelegramBotClient(""); // Buraya HTTP API'e erişim için, token yazılıyor
 
-        private static void Main()
-        {
-            IConfiguration config = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", true, true)
-                .Build();
-            var token = config["TelegramToken"];
-            botClient = new TelegramBotClient(config["TelegramToken"]);
             var me = botClient.GetMeAsync().Result;
-            Console.WriteLine($"Id = {me.Id} | Name = {me.FirstName}.");
-            IDatabase database;
-            if (config["Veritabani"].ToLower() == "mongo")
-                database = new MongoDatabase(config);
-            else
-                database = new DummyDatabase();
-            Message message = new Message(database);
-            botClient.OnMessage += message.Bot_OnMessage;
+            Console.WriteLine(
+              $"Id = {me.Id} | Name = {me.FirstName}. \n"
+            );
+
+            botClient.OnMessage += Message.Bot_OnMessage;
             botClient.StartReceiving();
-            WaitForCancel();
+            Thread.Sleep(int.MaxValue);
         }
     }
 }
